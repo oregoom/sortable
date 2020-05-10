@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body>
+    <style>
+        ul li{
+            padding: 10px;
+            cursor: move;
+        }
+        .container {
+        width 600px;
+    }
+
+    .image {
+        background-color: #ffcb05;
+        width: 400px;
+        height: 20px;
+        margin: 5px;
+        padding: 5px;
+        cursor: move;
+    }
+
+    .modulo {
+        background-color: #e7e7e7e7;
+        border: solid 1px #ccc;
+        min-height: 50px;
+        margin: 10px;
+        padding: 10px;
+        width: 600px;
+        vertical-align: top;
+    }
+
+    </style>
+<div class="container">
+
+    <div class="modulo" id="modulo_1">
+        <h2 class="title_modulo">Módulo 01</h2>
+        <div class="image" id="image_10">
+            <input type="hidden" value="modulo_1" name='mod'>
+            <span id="indice">1. </span>Clase 01
+        </div>
+        <div class="image" id="image_11"><span id="indice">2. </span>Clase 02</div>
+        <div class="image" id="image_12"><span id="indice">3. </span>Clase 03</div>
+    </div>
+
+    <div class="modulo" id="modulo_2">
+		<h2 class="title_modulo">Módulo 2</h2>
+        <div class="image" id="image_21"><span id="indice">4. </span>Clase 04</div>
+        <div class="image" id="image_22"><span id="indice">5. </span>Clase 05</div>
+        <div class="image" id="image_23"><span id="indice">6. </span>Clase 06</div>
+    </div>
+
+    <div class="modulo" id="modulo_3">
+		<h2 class="title_modulo">Módulo 3</h2>	
+        <div class="image" id="image_31"><span id="indice">7. </span>Clase 07</div>
+        <div class="image" id="image_32"><span id="indice">8. </span>Clase 08</div>
+        <div class="image" id="image_33"><span id="indice">9. </span>Clase 09</div>
+    </div>
+
+</div>
+
+<input class="mas_modulos" type="button" value="Más Módulos">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+
+    $(document).ready(function() {
+
+
+        var padreSuperior=$('#image_31').parent();
+        console.log(padreSuperior.attr('id'));
+
+        jQuery('.image').each(function(indice, elemento){
+            let padreSuperiorEs = jQuery(elemento).parent();
+            let moduloClase = padreSuperiorEs.attr('id');
+            jQuery(elemento).attr('title', moduloClase);
+        })
+
+        $('.container').sortable({
+            dropOnEmpty: true,
+
+            update: function (event, ui) {
+
+                /*
+                * Para actualizar el número de Clases
+                */
+                jQuery('span#indice').each(function(indice, elemento){
+                        jQuery(elemento).text(indice+1+'. ');
+
+                    })
+
+                //let data = $(this).sortable('toArray');            
+                //console.log(data);
+
+            }	
+        });	
+		
+	
+    $('.modulo').sortable({
+		connectWith: '.modulo',
+        items : ':not(.title_modulo)',
+        
+		update: function(e,ui) {
+
+            /*
+            * Para actualizar el numero de Clases
+            */
+            jQuery('span#indice').each(function(indice, elemento){
+                    jQuery(elemento).text(indice+1+'. ');
+                })
+		},	
+	});
+
+    jQuery('.mas_modulos').click(function(){
+
+        let modulosArray = jQuery('.modulo').toArray();
+        let Cantidad_modulos = modulosArray.length;
+
+        jQuery('.container').append('<div class="modulo" id="modulo_'+(Cantidad_modulos+1)+'"><h2 class="title_modulo">Módulo '+(Cantidad_modulos+1)+'</h2></div>');
+
+        $('.modulo').sortable({
+            connectWith: '.modulo',
+            items : ':not(.title_modulo)',
+        });
+
+    })
+
+
+
+            $(".pageContent").sortable({
+    start: function(e,ui){
+        // Antes de todos los demás eventos
+        // Solo ocurre una vez cada vez que comienza la clasificación
+    },
+    activate: function(e,ui){
+        // Después del evento de inicio y antes de todos los demás eventos
+        // Se produce una vez para cada lista conectada cada vez que comienza la clasificación
+    },
+    change: function(e,ui){
+        // Después de comenzar / activo pero antes de eventos de clasificación / salida
+        // Se produce cada vez que cambia la posición del elemento
+        // No ocurre cuando el elemento está fuera de una lista conectada
+    },
+    over: function(e,ui){
+        // Después del cambio pero antes de ordenar / ordenar eventos
+        // Se produce mientras el elemento se desplaza sobre una lista conectada
+    },
+    sort: function(e,ui){
+        //After over but before out event
+        //Occurs during sorting
+        //Does not matter if the item is outside of a connected list or not
+    },
+    out: function(e,ui){
+        //This one is unique
+        //After sort event before all drop/ending events unless **see NOTE
+        //Occurs, only once, the moment an item leaves a connected list
+        //NOTE: Occurs again when the item is dropped/sorting stops 
+        //--> EVEN IF the item never left the list
+        //--> Called just before the stop event but after all other ending events
+    },
+    beforeStop: function(e,ui){
+        //Before all other ending events: update,remove,receive,deactivate,stop
+        //Occurs only once at the last possible moment before sorting stops
+    },
+    remove: function(e,ui){
+        //After beforeStop and before all other ending events
+        //Occurs only once when an item is removed from a list
+    },
+    receive: function(e,ui){
+        //After remove and before all other ending events
+        //Occurs only once when an item is added to a list
+    },
+    update: function(e,ui){
+        // Después de recibir y antes de todos los demás eventos finales
+        // Ocurre cuando el DOM cambia para cada lista conectada
+        // Esto puede dispararse dos veces porque dos listas pueden cambiar (eliminar de una
+        // lista pero agregar a otro)
+    },
+    deactivate: function(e,ui){
+        //After all other events but before out (kinda) and stop
+        //Occurs once for each connected list each time sorting ends
+    },
+    stop: function(e,ui){
+        //After all other events
+        //Occurs only once when sorting ends
+    }
+});
+
+
+
+    });   
+
+</script>
+
+
+</body>
+</html>
